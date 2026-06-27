@@ -18,11 +18,10 @@ public class ControladorLinterna : MonoBehaviour
     public Action<float> OnBateriaCambiada;
 
     // Uso de Referencia al componente Light de Unity
-    private Light componenteLuz;
+    public Light componenteLuz;
 
     private void Awake()
     {
-        componenteLuz = GetComponent<Light>();
         bateriaActual = bateriaMaxima;
     }
 

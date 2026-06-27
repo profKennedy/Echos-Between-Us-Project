@@ -64,7 +64,7 @@ public class ControladorPersonaje : MonoBehaviour
             entradas.AlMoverse += movimiento.Mover;
             entradas.AlSaltar += movimiento.Saltar;
             entradas.AlInteractuar += interaccion.IntentarInteractuar;
-            entradas.AlAlternarLinterna += gestionLinterna.linterna.AlternarLuz; // F para encender/apagar
+            entradas.AlAlternarLinterna += gestionLinterna.IntentarAlternarLuz;
         }
         // Nota: Deberás conectar interaccion.IntentarInteractuar a entradas.AlInteractuar también
     }
@@ -75,7 +75,7 @@ public class ControladorPersonaje : MonoBehaviour
             entradas.AlMoverse -= movimiento.Mover;
             entradas.AlSaltar -= movimiento.Saltar;
             entradas.AlInteractuar -= interaccion.IntentarInteractuar;
-            entradas.AlAlternarLinterna -= gestionLinterna.linterna.AlternarLuz;
+            entradas.AlAlternarLinterna -= gestionLinterna.IntentarAlternarLuz;
         }
     }
 

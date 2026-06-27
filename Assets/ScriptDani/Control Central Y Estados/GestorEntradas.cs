@@ -16,7 +16,7 @@ public class GestorEntradas : MonoBehaviour
 
     private void Update()
     {
-        entradaMovimiento = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        entradaMovimiento = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         if (entradaMovimiento != Vector2.zero) AlMoverse?.Invoke(entradaMovimiento);
 
         saltarPresionado = Input.GetButtonDown("Jump");

@@ -7,6 +7,7 @@ public class MovimientoPersonaje : MonoBehaviour
     public Rigidbody rb;
     public float velocidadBase = 5f;
     public float velocidadActual = 5f;
+    public float velocidadRotacion = 10f;
     public float fuerzaSaltoBase = 6f;
     public float fuerzaSaltoActual = 6f;
     public bool enSigilo;
@@ -26,6 +27,16 @@ public class MovimientoPersonaje : MonoBehaviour
             rb.velocity.y,
             direccion.z * velocidadActual
         );
+
+        if (direccion.sqrMagnitude > 0.01f)
+        {
+            Quaternion rotacionObjetivo = Quaternion.LookRotation(direccion);
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                rotacionObjetivo,
+                Time.deltaTime * velocidadRotacion
+            );
+        }
     }
 
     public void Saltar() { if (EstaEnSuelo()) rb.AddForce(Vector3.up * fuerzaSaltoActual, ForceMode.Impulse); }
@@ -38,5 +49,5 @@ public class MovimientoPersonaje : MonoBehaviour
 
     public void AplicarModificadoresEncogimiento(float factor) => velocidadActual = velocidadBase * factor;
 
-    public bool EstaEnSuelo() => Physics.Raycast(transform.position, Vector3.down, 3.1f, layerSuelo);
+    public bool EstaEnSuelo() => Physics.Raycast(transform.position, Vector3.down, 0.1f, layerSuelo);
 }

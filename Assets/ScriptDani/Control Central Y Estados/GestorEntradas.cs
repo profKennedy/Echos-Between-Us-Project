@@ -12,12 +12,17 @@ public class GestorEntradas : MonoBehaviour
     public bool soltarLinternaPresionado;
 
     public event Action<Vector2> AlMoverse;
+    public event Action<bool> AlAlternarSigilo;
     public event Action AlSaltar, AlInteractuar, AlAlternarLinterna, AlSoltarLinterna;
 
     private void Update()
     {
         entradaMovimiento = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        AlMoverse?.Invoke(entradaMovimiento);
         if (entradaMovimiento != Vector2.zero) AlMoverse?.Invoke(entradaMovimiento);
+
+        if (Input.GetKeyDown(KeyCode.LeftShift)) AlAlternarSigilo?.Invoke(true);
+        if (Input.GetKeyUp(KeyCode.LeftShift)) AlAlternarSigilo?.Invoke(false);
 
         saltarPresionado = Input.GetButtonDown("Jump");
         if (saltarPresionado) AlSaltar?.Invoke();

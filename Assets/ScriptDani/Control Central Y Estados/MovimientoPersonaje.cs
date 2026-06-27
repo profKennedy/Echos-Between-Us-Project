@@ -14,13 +14,15 @@ public class MovimientoPersonaje : MonoBehaviour
     public LayerMask layerSuelo;
     public IModoMovimiento modoActual;
 
+
+    private bool _bloqueado = false;
     private void Awake()
     {
         modoActual = new ModoFreeLook(Camera.main.transform);
     }
     public void Mover(Vector2 dir)
     {
-        if (modoActual == null) return;
+        if (modoActual == null|| _bloqueado) return;
         Vector3 direccion = modoActual.CalcularDireccion(dir);
         rb.velocity = new Vector3(
             direccion.x * velocidadActual,
@@ -38,6 +40,8 @@ public class MovimientoPersonaje : MonoBehaviour
             );
         }
     }
+    public void Bloquear(bool valor) => _bloqueado = valor;
+
 
     public void Saltar() { if (EstaEnSuelo()) rb.AddForce(Vector3.up * fuerzaSaltoActual, ForceMode.Impulse); }
 

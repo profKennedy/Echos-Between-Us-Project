@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ControladorPersonaje : MonoBehaviour
 {
@@ -9,14 +10,14 @@ public class ControladorPersonaje : MonoBehaviour
     public MovimientoPersonaje movimiento;
     public InteraccionPersonaje interaccion;
     public EfectoEncogimiento efectoEncogimiento;
-
     public GestorEntradas entradas;
     public GestionLinterna gestionLinterna;
 
     public event Action OnPersonajeAsustado;
     public event Action<EstadoPersonaje> OnEstadoCambiado;
+
     [Space]
-    public Camera camaraFreeLook;  // arrastrás la cámara Cinemachine Brain acá
+    public Camera camaraFreeLook;
     public Transform transformMano;
 
     private ModoFreeLook _modoFreeLook;
@@ -27,16 +28,36 @@ public class ControladorPersonaje : MonoBehaviour
         _modoFreeLook = new ModoFreeLook(camaraFreeLook.transform);
         _modo2D = new Modo2DLateral();
     }
+
     private void Start()
     {
-        _modoFreeLook = new ModoFreeLook(camaraFreeLook.transform);
-        _modo2D = new Modo2DLateral();
-
-        // Arranca en FreeLook por defecto
         movimiento.modoActual = _modoFreeLook;
-
-        RunSelfCheck();
+        CambiarEstado(EstadoPersonaje.LIBRE);
     }
+
+    private void OnEnable()
+    {
+        if (entradas == null || movimiento == null) return;
+
+        entradas.AlMoverse += movimiento.Mover;
+        entradas.AlSaltar += movimiento.Saltar;
+        entradas.AlInteractuar += interaccion.IntentarInteractuar;
+        entradas.AlAlternarLinterna += gestionLinterna.IntentarAlternarLuz;
+        entradas.AlAlternarSigilo += OnSigiloInput;
+    }
+
+    private void OnDisable()
+    {
+        if (entradas == null || movimiento == null) return;
+
+        entradas.AlMoverse -= movimiento.Mover;
+        entradas.AlSaltar -= movimiento.Saltar;
+        entradas.AlInteractuar -= interaccion.IntentarInteractuar;
+        entradas.AlAlternarLinterna -= gestionLinterna.IntentarAlternarLuz;
+        entradas.AlAlternarSigilo -= OnSigiloInput;
+    }
+
+    
 
     public void CambiarEstado(EstadoPersonaje nuevoEstado)
     {
@@ -45,39 +66,49 @@ public class ControladorPersonaje : MonoBehaviour
         OnEstadoCambiado?.Invoke(estado);
     }
 
+   
+
+    private void OnSigiloInput(bool activar)
+    {
+        if (estado == EstadoPersonaje.ASUSTADA || estado == EstadoPersonaje.EN_FLASHBACK) return;
+
+        if (activar)
+        {
+            CambiarEstado(EstadoPersonaje.SIGILO);
+            movimiento.ActivarSigilo(true);
+        }
+        else
+        {
+            CambiarEstado(EstadoPersonaje.LIBRE);
+            movimiento.ActivarSigilo(false);
+        }
+    }
+
+
+
     public void AlSerAsustada()
     {
+        if (estado == EstadoPersonaje.EN_FLASHBACK) return;
+
         CambiarEstado(EstadoPersonaje.ASUSTADA);
+        movimiento.ActivarSigilo(false);
+        gestionLinterna.SoltarLinternaPorSusto();
         OnPersonajeAsustado?.Invoke();
     }
 
-    private void RunSelfCheck()
+    public void AlRecogerFragmento()
     {
-        CambiarEstado(EstadoPersonaje.SIGILO);
-        Debug.Assert(estado == EstadoPersonaje.SIGILO, "ponytail: Falló el cambio de estado básico en init.");
+        CambiarEstado(EstadoPersonaje.EN_FLASHBACK);
+        movimiento.Bloquear(true);
+        StartCoroutine(IrAEscenaFin());
     }
 
-    private void OnEnable()
+    private IEnumerator IrAEscenaFin()
     {
-        if (entradas != null && movimiento != null)
-        {
-            entradas.AlMoverse += movimiento.Mover;
-            entradas.AlSaltar += movimiento.Saltar;
-            entradas.AlInteractuar += interaccion.IntentarInteractuar;
-            entradas.AlAlternarLinterna += gestionLinterna.IntentarAlternarLuz;
-        }
-        // Nota: Deberás conectar interaccion.IntentarInteractuar a entradas.AlInteractuar también
+        yield return new WaitForSeconds(1f);
+        SceneManager.LoadScene("FinDelJuego");  
     }
-    private void OnDisable()
-    {
-        if (entradas != null && movimiento != null)
-        {
-            entradas.AlMoverse -= movimiento.Mover;
-            entradas.AlSaltar -= movimiento.Saltar;
-            entradas.AlInteractuar -= interaccion.IntentarInteractuar;
-            entradas.AlAlternarLinterna -= gestionLinterna.IntentarAlternarLuz;
-        }
-    }
+
 
     public void UsarCamaraFreeLook() => movimiento.modoActual = _modoFreeLook;
     public void UsarCamara2D() => movimiento.modoActual = _modo2D;

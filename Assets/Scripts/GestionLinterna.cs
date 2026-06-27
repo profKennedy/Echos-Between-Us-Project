@@ -91,4 +91,9 @@ public class GestionLinterna : MonoBehaviour, IInteractable
         transformMano = jugador.transformMano; // tomás la mano del jugador
         EquiparLinterna();
     }
+    public void IntentarAlternarLuz()
+    {
+        if (linternaEnSuelo) return; // no hace nada si está suelta
+        linterna.AlternarLuz();
+    }
 }

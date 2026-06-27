@@ -11,12 +11,32 @@ public class ControladorPersonaje : MonoBehaviour
     public EfectoEncogimiento efectoEncogimiento;
 
     public GestorEntradas entradas;
-
+    public GestionLinterna gestionLinterna;
 
     public event Action OnPersonajeAsustado;
     public event Action<EstadoPersonaje> OnEstadoCambiado;
+    [Space]
+    public Camera camaraFreeLook;  // arrastrás la cámara Cinemachine Brain acá
+    public Transform transformMano;
 
-    private void Start() => RunSelfCheck();
+    private ModoFreeLook _modoFreeLook;
+    private Modo2DLateral _modo2D;
+
+    private void Awake()
+    {
+        _modoFreeLook = new ModoFreeLook(camaraFreeLook.transform);
+        _modo2D = new Modo2DLateral();
+    }
+    private void Start()
+    {
+        _modoFreeLook = new ModoFreeLook(camaraFreeLook.transform);
+        _modo2D = new Modo2DLateral();
+
+        // Arranca en FreeLook por defecto
+        movimiento.modoActual = _modoFreeLook;
+
+        RunSelfCheck();
+    }
 
     public void CambiarEstado(EstadoPersonaje nuevoEstado)
     {
@@ -43,6 +63,8 @@ public class ControladorPersonaje : MonoBehaviour
         {
             entradas.AlMoverse += movimiento.Mover;
             entradas.AlSaltar += movimiento.Saltar;
+            entradas.AlInteractuar += interaccion.IntentarInteractuar;
+            entradas.AlAlternarLinterna += gestionLinterna.linterna.AlternarLuz; // F para encender/apagar
         }
         // Nota: Deberás conectar interaccion.IntentarInteractuar a entradas.AlInteractuar también
     }
@@ -52,6 +74,11 @@ public class ControladorPersonaje : MonoBehaviour
         {
             entradas.AlMoverse -= movimiento.Mover;
             entradas.AlSaltar -= movimiento.Saltar;
+            entradas.AlInteractuar -= interaccion.IntentarInteractuar;
+            entradas.AlAlternarLinterna -= gestionLinterna.linterna.AlternarLuz;
         }
     }
+
+    public void UsarCamaraFreeLook() => movimiento.modoActual = _modoFreeLook;
+    public void UsarCamara2D() => movimiento.modoActual = _modo2D;
 }

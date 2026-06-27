@@ -11,8 +11,22 @@ public class MovimientoPersonaje : MonoBehaviour
     public float fuerzaSaltoActual = 6f;
     public bool enSigilo;
     public LayerMask layerSuelo;
+    public IModoMovimiento modoActual;
 
-    public void Mover(Vector2 dir) => rb.velocity = new Vector3(dir.x * velocidadActual, rb.velocity.y, dir.y * velocidadActual);
+    private void Awake()
+    {
+        modoActual = new ModoFreeLook(Camera.main.transform);
+    }
+    public void Mover(Vector2 dir)
+    {
+        if (modoActual == null) return;
+        Vector3 direccion = modoActual.CalcularDireccion(dir);
+        rb.velocity = new Vector3(
+            direccion.x * velocidadActual,
+            rb.velocity.y,
+            direccion.z * velocidadActual
+        );
+    }
 
     public void Saltar() { if (EstaEnSuelo()) rb.AddForce(Vector3.up * fuerzaSaltoActual, ForceMode.Impulse); }
 

@@ -7,10 +7,26 @@ public class InteraccionPersonaje : MonoBehaviour
     public float radioDeteccion = 2f;
     public LayerMask layerInteractuable;
 
-    public void IntentarInteractuar()
+
+    private IInteractable _objetoCercanoActual;
+    private void Update()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, radioDeteccion, layerInteractuable);
-        if (hits.Length > 0 && hits[0].TryGetComponent(out IInteractable target)) target.Interactuar(GetComponent<ControladorPersonaje>());
+
+        IInteractable nuevo = hits.Length > 0 && hits[0].TryGetComponent(out IInteractable t) ? t : null;
+
+        // Si cambió el objeto cercano, actualizás los carteles
+        if (nuevo != _objetoCercanoActual)
+        {
+            _objetoCercanoActual?.MostrarPista(false); // oculta el anterior
+            nuevo?.MostrarPista(true);                 // muestra el nuevo
+            _objetoCercanoActual = nuevo;
+        }
+    }
+
+    public void IntentarInteractuar()
+    {
+        _objetoCercanoActual?.Interactuar(GetComponent<ControladorPersonaje>());
     }
 
     public void PerderLinternaPorSusto() { } // ponytail: lógica omitida hasta linkear módulo Linterna.

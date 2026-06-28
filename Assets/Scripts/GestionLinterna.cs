@@ -6,6 +6,7 @@ public class GestionLinterna : MonoBehaviour, IInteractable
     public ControladorLinterna linterna;
     private bool linternaEnSuelo = true; // Por defecto en el suelo (Nivel 1)
 
+    public GameObject cartelUI; // Referencia al cartel de UI para mostrar la pista
     public Transform transformMano;
     private Transform _padreOriginal;// para restaurar si la soltás
 
@@ -95,5 +96,9 @@ public class GestionLinterna : MonoBehaviour, IInteractable
     {
         if (linternaEnSuelo) return; // no hace nada si está suelta
         linterna.AlternarLuz();
+    }
+    public void MostrarPista(bool mostrar)
+    {
+        cartelUI.SetActive(mostrar);
     }
 }

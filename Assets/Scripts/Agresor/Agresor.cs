@@ -183,7 +183,7 @@ public class Agresor : MonoBehaviour, IAgresor
 
     public bool DetectarLuz(float intensidad, Vector3 posicionLuz)
     {
-        Debug.Log("DetectarLuz() recibido - volviendo a patrullar");
+        
         repelido = true;
         timerRepelido = 0f;
         CambiarEstadoAgresor(EstadoAgresor.PATRULLANDO);
@@ -208,10 +208,10 @@ public class Agresor : MonoBehaviour, IAgresor
             case EstadoAgresor.PATRULLANDO:
                 agente.speed = velocidadPatrulla;
                 timerAlerta = 0f;
-                esperandoEnWaypoint = false; // <-- agregá esta línea
+                esperandoEnWaypoint = false; 
                 if (waypoints.Length > 0)
                 {
-                    waypointActual = (waypointActual + 1) % waypoints.Length; // <-- avanza al siguiente
+                    waypointActual = (waypointActual + 1) % waypoints.Length; 
                     agente.SetDestination(waypoints[waypointActual].position);
                 }
                 OnAgresorVuelveAPatrullar?.Invoke();

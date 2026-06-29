@@ -16,8 +16,6 @@ public class GestorNiebla : MonoBehaviour
 
     private void Update()
     {
-        // Si no hay linterna asignada o está apagada, desactivar disolución en todas las zonas
-        Debug.Log($"GestorNiebla Update | Linterna: {linterna != null} | Encendida: {linterna?.EstaEncendida()}  | Zonas: {zonasActivas.Count}");
 
         if (linterna == null || !linterna.EstaEncendida())
         {
@@ -48,7 +46,7 @@ public class GestorNiebla : MonoBehaviour
 
             bool iluminada = angulo < luz.spotAngle / 2f && distancia < distanciaMaximaLinterna;
 
-            Debug.Log($"Zona: {zona.name} | Dist: {distancia} | Angulo: {angulo} | SpotAngle/2: {luz.spotAngle / 2f} | Iluminada: {iluminada}");
+            
 
             zona.DisolverlPorLinterna(iluminada);
         }

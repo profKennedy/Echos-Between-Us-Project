@@ -136,8 +136,19 @@ public class Agresor : MonoBehaviour, IAgresor
 
         if (Vector3.Distance(transform.position, objetivoJugador.position) <= distanciaAtaque)
         {
-            // Aquí podés llamar a jugador.AlSerAsustada() cuando tengas ControladorPersonaje
-            Debug.Log("¡Agresor alcanzó al jugador!");
+            //llamar a jugador.AlSerAsustada()
+            // Obtener el componente ControladorPersonaje del GameObject del jugador
+            ControladorPersonaje jugador = objetivoJugador.GetComponent<ControladorPersonaje>();
+
+            if (jugador != null)
+            {
+                //jugador.AlSerAsustada();
+                Debug.Log("¡Agresor alcanzó al jugador!");
+            }
+            else
+            {
+                Debug.LogWarning("No se encontró ControladorPersonaje en el jugador");
+            }
         }
     }
 

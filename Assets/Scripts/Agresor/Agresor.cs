@@ -53,7 +53,7 @@ public class Agresor : MonoBehaviour, IAgresor
     {
         agente = GetComponent<NavMeshAgent>();
 
-        ControladorPersonaje jugador = FindObjectOfType<ControladorPersonaje>();
+        ControladorPersonaje jugador = FindFirstObjectByType<ControladorPersonaje>();
         if (jugador != null)
             objetivoJugador = jugador.transform;
         else
@@ -142,7 +142,7 @@ public class Agresor : MonoBehaviour, IAgresor
 
             if (jugador != null)
             {
-                //jugador.AlSerAsustada();
+                jugador.AlSerAsustada();
                 Debug.Log("¡Agresor alcanzó al jugador!");
             }
             else

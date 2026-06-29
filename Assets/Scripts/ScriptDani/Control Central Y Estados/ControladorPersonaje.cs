@@ -23,6 +23,9 @@ public class ControladorPersonaje : MonoBehaviour
     private ModoFreeLook _modoFreeLook;
     private Modo2DLateral _modo2D;
 
+    private bool _puedeAsustarse = true;
+    private float _cooldownSusto = 2f;
+
     private void Awake()
     {
         _modoFreeLook = new ModoFreeLook(camaraFreeLook.transform);
@@ -89,13 +92,22 @@ public class ControladorPersonaje : MonoBehaviour
     public void AlSerAsustada()
     {
         if (estado == EstadoPersonaje.EN_FLASHBACK) return;
+        if (!_puedeAsustarse) return; // bloquea el spam
 
+        _puedeAsustarse = false;
         CambiarEstado(EstadoPersonaje.ASUSTADA);
         movimiento.ActivarSigilo(false);
         gestionLinterna.SoltarLinternaPorSusto();
         OnPersonajeAsustado?.Invoke();
-    }
 
+        StartCoroutine(RecuperarseDeSusto());
+    }
+    private IEnumerator RecuperarseDeSusto()
+    {
+        yield return new WaitForSeconds(_cooldownSusto);
+        _puedeAsustarse = true;
+        CambiarEstado(EstadoPersonaje.LIBRE); // vuelve a LIBRE después del susto
+    }
     public void AlRecogerFragmento()
     {
         CambiarEstado(EstadoPersonaje.EN_FLASHBACK);

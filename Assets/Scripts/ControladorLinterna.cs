@@ -13,6 +13,11 @@ public class ControladorLinterna : MonoBehaviour
     public float intensidadLuz = 10f;
     private bool estaEncendida = false;
 
+    [Header("Audio Linterna")]
+    [SerializeField] private AudioSource audioSourceLinterna;
+    [SerializeField] private AudioClip sfxEncender;
+    [SerializeField] private AudioClip sfxApagar;
+
     // Eventos 
     public Action<bool> OnLuzCambiada;
     public Action<float> OnBateriaCambiada;
@@ -23,6 +28,7 @@ public class ControladorLinterna : MonoBehaviour
     private void Awake()
     {
         bateriaActual = bateriaMaxima;
+        if (audioSourceLinterna == null) audioSourceLinterna = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -39,6 +45,12 @@ public class ControladorLinterna : MonoBehaviour
         {
             estaEncendida = true;
             if (componenteLuz != null) componenteLuz.enabled = true;
+
+            if (audioSourceLinterna != null && sfxEncender != null)
+            {
+                audioSourceLinterna.PlayOneShot(sfxEncender);
+            }
+
             OnLuzCambiada?.Invoke(true);
         }
     }
@@ -47,6 +59,12 @@ public class ControladorLinterna : MonoBehaviour
     {
         estaEncendida = false;
         if (componenteLuz != null) componenteLuz.enabled = false;
+
+        if (audioSourceLinterna != null && sfxApagar != null)
+        {
+            audioSourceLinterna.PlayOneShot(sfxApagar);
+        }
+
         OnLuzCambiada?.Invoke(false);
     }
 

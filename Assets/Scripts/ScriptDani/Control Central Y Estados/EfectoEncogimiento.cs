@@ -12,9 +12,13 @@ public class EfectoEncogimiento : MonoBehaviour
     public float velocidadTransicion = 2f;
     public float velocidadRecuperacion = 1f;
 
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] AudioClip sfxEncogerse;
 
     private float _alturaOriginal;
     private float _radioOriginal;
+
+    private bool _yaSono = false;
 
     private void Awake()
     {
@@ -23,6 +27,8 @@ public class EfectoEncogimiento : MonoBehaviour
             _alturaOriginal = capsule.height;
             _radioOriginal = capsule.radius;
         }
+
+        if (audioSource == null) audioSource = GetComponent<AudioSource>();
     }
     private void Update()
     {
@@ -52,12 +58,19 @@ public class EfectoEncogimiento : MonoBehaviour
     public void AplicarPresion(float nivelNegatividad)
     {
         factorObjetivo = Mathf.Max(factorMinimo, 1f - nivelNegatividad);
+
+        if (!_yaSono && audioSource != null && sfxEncogerse != null)
+        {
+            audioSource.PlayOneShot(sfxEncogerse);
+            _yaSono = true; // Lo marcamos como reproducido
+        }
     }
 
     // Llamado cuando dejan de mirarla
     public void IniciarRecuperacion()
     {
         factorObjetivo = 1f;
+        _yaSono = false;
     }
     public float ObtenerFactorActual() => factorEncogimientoActual;
     public bool EstaEncogida() => factorEncogimientoActual < 0.98f;

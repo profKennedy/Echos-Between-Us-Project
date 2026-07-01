@@ -1,6 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Rendering.Universal.ShaderGUI;
+
 using UnityEngine;
 using UnityEngine.UI;
 

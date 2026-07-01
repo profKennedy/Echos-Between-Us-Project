@@ -53,5 +53,14 @@ public class MovimientoPersonaje : MonoBehaviour
 
     public void AplicarModificadoresEncogimiento(float factor) => velocidadActual = velocidadBase * factor;
 
-    public bool EstaEnSuelo() => Physics.Raycast(transform.position, Vector3.down, 0.1f, layerSuelo);
+    public bool EstaEnSuelo()
+    {
+        CapsuleCollider capsule = GetComponent<CapsuleCollider>();
+
+        Vector3 origen = capsule.bounds.center;
+        float radio = capsule.radius * 0.9f;
+        float distancia = capsule.bounds.extents.y + 0.1f;
+
+        return Physics.SphereCast(origen, radio, Vector3.down, out _, distancia, layerSuelo);
+    }
 }
